@@ -51,17 +51,15 @@ int floor_check (int idx) {
 
 bool intersect (int i, int j) {
     const
-    float h_2 = domino_height_2,
+    float x1 = world[i].x1,
+          y1 = world[i].y1,
+          x2 = world[i].x2,
+          y2 = world[i].y2,
 
-          x1 = world[i].x - h_2 * cos(world[i].theta),
-          y1 = world[i].y - h_2 * sin(world[i].theta),
-          x2 = world[i].x + h_2 * cos(world[i].theta),
-          y2 = world[i].y + h_2 * sin(world[i].theta),
-
-          x3 = world[j].x - h_2 * cos(world[j].theta),
-          y3 = world[j].y - h_2 * sin(world[j].theta),
-          x4 = world[j].x + h_2 * cos(world[j].theta),
-          y4 = world[j].y + h_2 * sin(world[j].theta);
+          x3 = world[j].x1,
+          y3 = world[j].y1,
+          x4 = world[j].x2,
+          y4 = world[j].y2;
 
     // rough check
     if (x1 <= x2) {
@@ -102,6 +100,16 @@ void cross_check (uint i) {
     }
 }
 
+void update_endpoints (int idx) {
+    const
+    float c = domino_height_2 * cos(obj.theta),
+          s = domino_height_2 * sin(obj.theta);
+    obj.x1 = obj.x - c;
+    obj.x2 = obj.x + c;
+    obj.y1 = obj.y - s;
+    obj.y2 = obj.y + s;
+}
+
 void move_world (void) {
     for (uint idx=0; idx<world.size(); ++idx) {
         obj.vy -= g * dt;
@@ -122,8 +130,13 @@ void move_world (void) {
 
         obj.x += obj.vx * dt;
         obj.y += obj.vy * dt;
-        cross_check(idx);
     }
+
+    for (uint idx=0; idx<world.size(); ++idx)
+        update_endpoints(idx);
+
+    for (uint idx=0; idx<world.size(); ++idx)
+        cross_check(idx);
 }
 
 // ------------------------------------------------------------------

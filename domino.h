@@ -1,5 +1,6 @@
 typedef struct {
     float x, y, theta,
+          x1, y1, x2, y2,
           vx,vy,omega;
 } domino;
 
