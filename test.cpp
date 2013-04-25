@@ -61,7 +61,7 @@ bool intersect (int i, int j) {
           x4 = world[j].x2,
           y4 = world[j].y2;
 
-    // rough check
+    // rough check (this use!)
     if (x1 <= x2) {
         if (x2 <= x3 && x2 <= x4) return false;
         if (x1 >= x3 && x1 >= x4) return false;
@@ -112,9 +112,6 @@ void update_endpoints (int idx) {
 
 void move_world (void) {
     for (uint idx=0; idx<world.size(); ++idx) {
-        obj.vy -= g * dt;
-
-        obj.theta += obj.omega * dt;
         int og = floor_check(idx);
         switch (og) {
         case 1:
@@ -130,6 +127,8 @@ void move_world (void) {
 
         obj.x += obj.vx * dt;
         obj.y += obj.vy * dt;
+        obj.vy -= g * dt;
+        obj.theta += obj.omega * dt;
     }
 
     for (uint idx=0; idx<world.size(); ++idx)
@@ -161,10 +160,9 @@ void display (void) {
         glVertex2f(relX(obj.x)-1, relY(obj.y)-1);
         glEnd();
         glBegin(GL_LINE_LOOP);
-        glVertex2f(relX(obj.x-domino_height_2*cos(obj.theta)),
-                   relY(obj.y-domino_height_2*sin(obj.theta)));
-        glVertex2f(relX(obj.x+domino_height_2*cos(obj.theta)),
-                   relY(obj.y+domino_height_2*sin(obj.theta)));
+        update_endpoints(idx);
+        glVertex2f(relX(obj.x1), relY(obj.y1));
+        glVertex2f(relX(obj.x2), relY(obj.y2));
         glEnd();
     }
 
@@ -247,35 +245,5 @@ void print_world (int i) {
 }
 
 void debug (void) {
-    int i,j;
-    cin >> i >> j;
-    const
-    float h_2 = domino_height_2,
-
-          x1 = world[i].x - h_2 * cos(world[i].theta),
-          y1 = world[i].y - h_2 * sin(world[i].theta),
-          x2 = world[i].x + h_2 * cos(world[i].theta),
-          y2 = world[i].y + h_2 * sin(world[i].theta),
-
-          x3 = world[j].x - h_2 * cos(world[j].theta),
-          y3 = world[j].y - h_2 * sin(world[j].theta),
-          x4 = world[j].x + h_2 * cos(world[j].theta),
-          y4 = world[j].y + h_2 * sin(world[j].theta);
-
-    const
-    int c1 = ccw(x1,y1, x2,y2, x3,y3),
-        c2 = ccw(x1,y1, x2,y2, x4,y4),
-        c3 = ccw(x3,y3, x4,y4, x1,y1),
-        c4 = ccw(x3,y3, x4,y4, x2,y2);
-
-    print_world(i);
-    print_world(j);
-    cout << i<<" and "<<j<<" are"
-         <<(intersect(i, j) ? "" : "not")<<" intersect"<<endl;
-
-    cout <<i<<" : "<<x1<<", "<<y1<<"; "<<x2<<", "<<y2<<endl;
-    cout <<j<<" : "<<x3<<", "<<y3<<"; "<<x4<<", "<<y4<<endl;
-
-    cout <<c1<< ", "<<c2 << "; "<<c3<<", "<<c4<<endl;
     return;
 }
