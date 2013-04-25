@@ -22,27 +22,25 @@ void drawString (char *s, float x, float y, float z) {
 int floor_check (int idx) {
 
     const
-    int h_2 = domino_height_2;
+    float h_2 = domino_height_2,
+          y1 = obj.y1,
+          y2 = obj.y2;
 
-    const
-    float y0 = obj.y,
-          dy = h_2 * sin(obj.theta);
-
-    if (dy == 0 && y0 < GROUND) {
+    if (y1 == y2 && y1 < GROUND) {
         sleep:
         obj.theta = 0;
         obj.y = GROUND;
         return 2;
     }
-    if (dy > 0 && y0 - dy <= GROUND) {
-        if (abs(dy) < 1e-2) goto sleep;
-        obj.y = GROUND + dy;
+    if (y1 < y2 && y1 <= GROUND) {
+        if (abs(y1-y2) < 1e-2) goto sleep;
+        obj.y += (GROUND - y1);
         obj.omega -= domino_m*g*cos(obj.theta)*h_2/domino_I*dt;
         return -1;
     }
-    if (dy < 0 && y0 + dy <= GROUND) {
-        if (abs(dy) < 1e-2) goto sleep;
-        obj.y = GROUND - dy;
+    if (y2 < y1 && y2 <= GROUND) {
+        if (abs(y1-y2) < 1e-2) goto sleep;
+        obj.y += (GROUND-y2);
         obj.omega += domino_m*g*cos(obj.theta)*h_2/domino_I*dt;
         return 1;
     }
