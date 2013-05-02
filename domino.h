@@ -1,7 +1,12 @@
+#include <vector>
+#define obj world[idx]
+
+typedef unsigned int uint;
+
 typedef struct {
-    float x, y, theta,
-          x1, y1, x2, y2,
-          vx,vy,omega;
+  float x, y, theta,
+        x1, y1, x2, y2,
+        vx,vy,omega;
 } domino;
 
 // window size
@@ -17,19 +22,16 @@ int WIDTH = 600,
 
 const
 float g = 0.98,
-	  dt = 1e-4;
+   	  dt = 1e-4;
 
-// [0,WIDTH] -> [-1,1]
-inline float relX (float x) {
-    float half_width = WIDTH/2.0;
-    return (x - half_width) / half_width;
-}
-// [0,HEIGHT] -> [-1,1]
-inline float relY (float y) {
-    float half_height = HEIGHT/2.0;
-    return (y - half_height) / half_height;
-}
+void update_endpoints(int);
+void move_world(void);
+void add_domino(void);
 
-bool intersect(int, int);
-int ccw(float,float,float,float,float,float);
+void init_cursor(void);
+void cursor_move(float);
+void cursor_set_theta(int);
+
+void display(void);
+void animation_toggle(void);
 void debug(void);
